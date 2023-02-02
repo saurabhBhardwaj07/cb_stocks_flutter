@@ -1,9 +1,10 @@
+import 'package:cb_stocks/controller/main_controller.dart';
 import 'package:cb_stocks/screens/CBSplashScreen.dart';
-import 'package:cb_stocks/utils/CBColors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 void main() {
+  Get.lazyPut<MainController>(() => MainController());
   runApp(const MyApp());
 }
 
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

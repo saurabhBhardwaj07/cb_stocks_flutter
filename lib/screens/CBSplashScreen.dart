@@ -35,6 +35,7 @@ class _CBSplashScreenState extends State<CBSplashScreen> {
   Widget build(BuildContext context) {
     return CBBasicLayout(
         hasParentPadding: false,
+        showAppBar: false,
         statusColor: CBColors.beauBlue,
         child: Container(
           color: CBColors.beauBlue,

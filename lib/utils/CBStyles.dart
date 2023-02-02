@@ -83,40 +83,40 @@ class CBStyles {
     );
   }
 
-  static const TextStyle? textLabelStyle = TextStyle(
+  static const TextStyle textLabelStyle = TextStyle(
     color: Color.fromARGB(127, 242, 238, 236),
     fontSize: 13,
     fontWeight: FontWeight.w500,
   );
-  static const TextStyle? textLabelBrownStyle = TextStyle(
+  static const TextStyle textLabelBrownStyle = TextStyle(
     color: CBColors.lava,
     fontSize: 13,
     fontWeight: FontWeight.w500,
   );
-  static const TextStyle? textHintStyle = TextStyle(
+  static const TextStyle textHintStyle = TextStyle(
     color: Color.fromARGB(127, 242, 238, 236),
     fontSize: 15,
     fontWeight: FontWeight.w500,
     height: 1.5,
   );
-  static const TextStyle? textParagraphWhiteStyle = TextStyle(
+  static const TextStyle textParagraphWhiteStyle = TextStyle(
     color: Color.fromARGB(255, 242, 238, 236),
     fontSize: 15,
     fontWeight: FontWeight.w500,
     height: 1.5,
   );
-  static const TextStyle? textParagraphWhite12Style = TextStyle(
+  static const TextStyle textParagraphWhite12Style = TextStyle(
     color: Color.fromARGB(255, 242, 238, 236),
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
-  static const TextStyle? textParagraphWhite10Style = TextStyle(
+  static const TextStyle textParagraphWhite10Style = TextStyle(
     color: Color.fromARGB(255, 242, 238, 236),
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
 
-  static const TextStyle? textParagraphWhite15SemiBoldStyle = TextStyle(
+  static const TextStyle textParagraphWhite15SemiBoldStyle = TextStyle(
     color: Color.fromARGB(255, 242, 238, 236),
     fontSize: 15,
     fontWeight: FontWeight.w700,
@@ -127,12 +127,12 @@ class CBStyles {
     fontSize: 18,
     fontWeight: FontWeight.w700,
   );
-  static const TextStyle? text12MediumWhiteStyle = TextStyle(
+  static const TextStyle text12MediumWhiteStyle = TextStyle(
     color: Color.fromARGB(255, 242, 238, 236),
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
-  static const TextStyle? text12BoldWhiteStyle = TextStyle(
+  static const TextStyle text12BoldWhiteStyle = TextStyle(
     color: Color.fromARGB(255, 242, 238, 236),
     fontSize: 12,
     fontWeight: FontWeight.w700,
