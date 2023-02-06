@@ -19,9 +19,15 @@ class _CBSearchScreenState extends State<CBSearchScreen> {
         screenHeading: 'Search',
         child: Column(
           children: [
+            SizedBox(
+              height: 20,
+            ),
             TextFormField(
               controller: searchCtr,
-              style: CBStyles.semiBold600(),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
                 border: const OutlineInputBorder(
@@ -37,7 +43,7 @@ class _CBSearchScreenState extends State<CBSearchScreen> {
                   Icons.search,
                   color: CBColors.prusianBlue,
                 ),
-                hintStyle: CBStyles.regular400(),
+                hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
               ),
               onFieldSubmitted: (value) {},
             ),

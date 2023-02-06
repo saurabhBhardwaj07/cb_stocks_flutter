@@ -1,15 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cb_stocks/Shared/shared_Screens/basicLayout.dart';
+import 'package:cb_stocks/data/repository.dart';
 import 'package:cb_stocks/utils/CBColors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../data/model/images_response.dart';
 
 class CBImageFullViewScreen extends StatefulWidget {
-  final List<SingleImagesItem> imageList;
-  final int index;
-  const CBImageFullViewScreen(
+  List<SingleImagesItem> imageList;
+  int index;
+
+  CBImageFullViewScreen(
       {super.key, required this.imageList, required this.index});
 
   @override
@@ -17,134 +19,190 @@ class CBImageFullViewScreen extends StatefulWidget {
 }
 
 class _CBImageFullViewScreenState extends State<CBImageFullViewScreen> {
-  PageController imageController = PageController();
-  var currentSliderPosition = 0.obs;
-  double _currPageValue = 0;
-
+  final controller = ScrollController();
   @override
   void initState() {
-    imageController =
-        PageController(initialPage: widget.index, viewportFraction: 0.85);
-    imageController.addListener(() {
-      setState(() {
-        _currPageValue = imageController.page!;
-      });
-    });
+    imageLiked.value = widget.imageList[widget.index].isLiked;
     super.initState();
   }
 
+  List<Color> color = [
+    Colors.green,
+    Colors.pink,
+    Colors.brown,
+    Colors.deepOrange,
+    Colors.blue,
+    Colors.greenAccent,
+    Colors.purple,
+    Colors.green,
+    Colors.pink,
+  ];
+
+  var imageLiked = false.obs;
+
   @override
   Widget build(BuildContext context) {
-    //scale factor
-    double scaleFactor = 0.8;
-    //view page height
-    double height = 500;
-    _buildImagePage(int index) {
-      Matrix4 matrix = Matrix4.identity();
-      if (index == _currPageValue.floor()) {
-        var currScale = 1 - (_currPageValue - index) * (1 - scaleFactor);
-        var currTrans = height * (1 - currScale) / 2;
-        matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-          ..setTranslationRaw(1, currTrans, 0);
-      } else if (index == _currPageValue.floor() + 1) {
-        var currScale =
-            scaleFactor + (_currPageValue - index + 1) * (1 - scaleFactor);
-        var currTrans = height * (1 - currScale) / 2;
-        matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-          ..setTranslationRaw(0, currTrans, 0);
-      } else if (index == _currPageValue.floor() - 1) {
-        var currScale = 1 - (_currPageValue - index) * (1 - scaleFactor);
-        var currTrans = height * (1 - currScale) / 2;
-        matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-          ..setTranslationRaw(0, currTrans, 0);
-      } else {
-        var currScale = 0.8;
-        matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-          ..setTranslationRaw(0, height * (1 - scaleFactor) / 2, 0);
-      }
-      var x = widget.imageList[index];
-      return Transform(
-        transform: matrix,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            right: 10.0,
-          ),
-          child: CachedNetworkImage(
-            // width: MediaQuery.of(context).size.width,
-            // height: MediaQuery.of(context).size.height * 0.24,
-            imageUrl: x.path ?? "",
-            fit: BoxFit.cover,
-            errorWidget: (context, url, error) =>
-                Image.asset('assets/images/ad_banner.png'),
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-        backgroundColor: Colors.black,
-        resizeToAvoidBottomInset: true,
-        extendBody: true,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          elevation: 0.0,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarColor: Colors.black,
-              statusBarIconBrightness: Brightness.light),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.6,
-                child: PageView.builder(
-                    itemCount: widget.imageList.length,
-                    physics: const BouncingScrollPhysics(),
-                    controller: imageController,
-                    onPageChanged: (index) {
-                      currentSliderPosition.value = index;
-                    },
-                    itemBuilder: (context, position) {
-                      return _buildImagePage(position);
-                    }),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(45.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton.icon(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CBColors.white,
-                        ),
-                        icon: const Icon(
-                          Icons.thumb_up,
-                          color: Colors.black,
-                        ),
-                        label: const Text(
-                          'Like',
-                          style: TextStyle(color: Colors.black),
-                        )),
-                    ElevatedButton.icon(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CBColors.redCrayola,
-                        ),
-                        icon: const Icon(Icons.upload),
-                        label: const Text('Download')),
-                  ],
+    Size size = MediaQuery.of(context).size;
+    double horizontalPadding = size.width * 0.05;
+    return CBBasicLayout(
+      backIcon: true,
+      hasParentPadding: false,
+      child: ListView(
+        controller: controller,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                widget.index == 0
+                    ? const SizedBox(
+                        width: 20,
+                      )
+                    : InkWell(
+                        onTap: () {
+                          if (widget.index > 0) {
+                            widget.index--;
+                            imageLiked.value =
+                                widget.imageList[widget.index].isLiked;
+                            setState(() {});
+                          }
+                        },
+                        child: const Icon(Icons.arrow_back_ios)),
+                Expanded(
+                  child: CachedNetworkImage(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 2,
+                    imageUrl: widget.imageList[widget.index].path ?? "",
+                    fit: BoxFit.fitHeight,
+                    errorWidget: (context, url, error) =>
+                        Image.asset('assets/icons/ad_banner.png'),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-            ],
+                widget.index < widget.imageList.length - 1
+                    ? InkWell(
+                        onTap: () {
+                          print(widget.index);
+                          print(widget.imageList.length);
+                          if (widget.index < widget.imageList.length - 1) {
+                            widget.index++;
+                            imageLiked.value =
+                                widget.imageList[widget.index].isLiked;
+                            setState(() {});
+                          }
+                        },
+                        child: const RotatedBox(
+                            quarterTurns: 2, child: Icon(Icons.arrow_back_ios)))
+                    : const SizedBox(
+                        width: 20,
+                      ),
+              ],
+            ),
           ),
-        ));
+          const SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  widget.imageList[widget.index].name ?? "",
+                  style: TextStyle(fontSize: 18),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          widget.imageList[widget.index].likes.toString(),
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w700),
+                        ),
+                        ElevatedButton.icon(
+                            onPressed: () async {
+                              if (imageLiked.value == true) {
+                                imageLiked.value = !imageLiked.value;
+                                widget.imageList[widget.index].likes--;
+                                widget.imageList[widget.index].isLiked =
+                                    imageLiked.value;
+                                setState(() {});
+                              } else {
+                                imageLiked.value = !imageLiked.value;
+                                widget.imageList[widget.index].likes++;
+                                widget.imageList[widget.index].isLiked =
+                                    imageLiked.value;
+                                setState(() {});
+                              }
+
+                              await repository
+                                  .likeImage(widget.imageList[widget.index].id
+                                      .toString())
+                                  .then((value) {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: CBColors.white,
+                            ),
+                            icon: Icon(
+                              Icons.thumb_up,
+                              color: imageLiked.value
+                                  ? Colors.redAccent
+                                  : Colors.black,
+                            ),
+                            label: const Text(
+                              'Like',
+                              style: TextStyle(color: Colors.black),
+                            )),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          widget.imageList[widget.index].downloads.toString(),
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w700),
+                        ),
+                        ElevatedButton.icon(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: CBColors.redCrayola,
+                            ),
+                            icon: const Icon(Icons.upload),
+                            label: const Text('Download')),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: GridView.builder(
+                itemCount: color.length,
+                controller: controller,
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                    mainAxisExtent: 140),
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                      decoration: BoxDecoration(
+                          color: color[index],
+                          borderRadius: BorderRadius.circular(12)));
+                }),
+          ),
+        ],
+      ),
+    );
   }
 }

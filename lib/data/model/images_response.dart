@@ -28,9 +28,10 @@ class SingleImagesItem {
   String? id;
   String? name;
   String? path;
-  int? likes;
-  int? downloads;
-  int? views;
+  int likes = 0;
+  int downloads = 0;
+  int views = 0;
+  bool isLiked = false;
   Category? category;
   List<TagColors>? tagColors;
   List<Tags>? tags;
@@ -50,6 +51,9 @@ class SingleImagesItem {
     }
     if (json["likes"] is int) {
       likes = json["likes"];
+    }
+    if (json["isLiked"] is bool) {
+      likes = json["isLiked"];
     }
     if (json["downloads"] is int) {
       downloads = json["downloads"];
@@ -88,6 +92,7 @@ class SingleImagesItem {
     data["name"] = name;
     data["path"] = path;
     data["likes"] = likes;
+    data["isLiked"] = isLiked;
     data["downloads"] = downloads;
     data["views"] = views;
     if (category != null) {

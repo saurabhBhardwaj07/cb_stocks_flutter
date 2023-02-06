@@ -13,17 +13,27 @@ class Repository extends LocalRepository {
   Future<Response> fetchCategory() {
     return dio.get('category');
   }
+
+  Future<Response> fetchImageByCategory(String categoryId, {int? page}) {
+    return dio.get('image',
+        queryParameters: {'category': categoryId, 'limit': 8, "page": page});
+  }
+
+  Future<Response> fetchImageByColors(String categoryId, {int? page}) {
+    return dio.get('image',
+        queryParameters: {'color': categoryId, 'limit': 8, "page": page});
+  }
+
+  Future<Response> likeImage(String id) {
+    return dio.post('image/like/$id');
+  }
 }
 
 Dio _instance() {
   var dio = Dio();
   dio.options.responseType = ResponseType.json;
-  // dio.options.baseUrl = "https://cfe3d0869a.nxcli.net/wp-json/";
-  //MARK: - staging
+
   dio.options.baseUrl = "https://cb.techrapid.in/";
-  //MARK: - Production
-  // dio.options.baseUrl = Constants.apiBaseUrl;
-  // dio.options.baseUrl = "https://staging.yatilabs.com/shotpro/wp-json/";
 
   // dio.interceptors.add(RetryOnConnectionChangeInterceptor(dio: dio));
 

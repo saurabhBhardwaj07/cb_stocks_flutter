@@ -1,4 +1,4 @@
-package com.example.cb_stocks
+package com.techrapid.cbstocks
 
 import io.flutter.embedding.android.FlutterActivity
 

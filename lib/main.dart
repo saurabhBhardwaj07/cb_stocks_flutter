@@ -2,6 +2,7 @@ import 'package:cb_stocks/controller/main_controller.dart';
 import 'package:cb_stocks/screens/CBSplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   Get.lazyPut<MainController>(() => MainController());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'CB Stocks',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         primarySwatch: Colors.blue,
       ),
       home: const CBSplashScreen(),
