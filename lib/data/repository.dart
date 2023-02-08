@@ -27,6 +27,10 @@ class Repository extends LocalRepository {
   Future<Response> likeImage(String id) {
     return dio.post('image/like/$id');
   }
+
+  Future<Response> searchImage(String text) {
+    return dio.get('image', queryParameters: {'search': text});
+  }
 }
 
 Dio _instance() {

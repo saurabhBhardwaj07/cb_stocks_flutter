@@ -1,15 +1,21 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cb_stocks/Shared/shared_Screens/basicLayout.dart';
 import 'package:cb_stocks/Shared/shared_widget/shimmer_loading_for_staggered.dart';
 import 'package:cb_stocks/Shared/shared_widget/skeleton_container.dart';
+import 'package:cb_stocks/controller/admob_controller.dart';
 import 'package:cb_stocks/controller/staggered_image_controller.dart';
 import 'package:cb_stocks/data/model/images_response.dart';
 import 'package:cb_stocks/screens/CBImageFullView.dart';
-import 'package:cb_stocks/utils/CBColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../Service/admob_banner.dart';
 
 class CBStaggeredListView extends StatefulWidget {
   final Category? category;
@@ -22,6 +28,7 @@ class CBStaggeredListView extends StatefulWidget {
 
 class _CBStaggeredListViewState extends State<CBStaggeredListView> {
   StaggeredImageController sic = Get.put(StaggeredImageController());
+  AdMobController adMob = Get.find();
   int pageNo = 1;
   final controller = ScrollController();
 
@@ -50,7 +57,34 @@ class _CBStaggeredListViewState extends State<CBStaggeredListView> {
         }
       }
     });
+
+    Timer(const Duration(milliseconds: 1500), () {
+      runPageBanner();
+      adMob.runFullPageAdBanner();
+    });
     super.initState();
+  }
+
+  var isBannerLoad = false.obs;
+  late BannerAd bottomBanner;
+
+  void runPageBanner() async {
+    bottomBanner = BannerAd(
+        size: AdSize.banner,
+        adUnitId: AdMobHelper.staggeredImageListingBottomBanner,
+        listener: BannerAdListener(onAdLoaded: (ad) {
+          log('Staggered Banner Loaded');
+          isBannerLoad.value = true;
+        }, onAdClosed: (ad) {
+          ad.dispose();
+          log('Staggered Banner Dispose');
+          isBannerLoad.value = false;
+        }, onAdFailedToLoad: (ad, err) {
+          log(err.toString());
+        }),
+        request: const AdRequest());
+
+    await bottomBanner.load();
   }
 
   @override
@@ -76,6 +110,11 @@ class _CBStaggeredListViewState extends State<CBStaggeredListView> {
 
     return CBBasicLayout(
         backIcon: true,
+        bottomNavigationBar: Obx(() => isBannerLoad.value == true
+            ? Container(
+                height: bottomBanner.size.height.toDouble(),
+                child: AdWidget(ad: bottomBanner))
+            : SizedBox()),
         child: Obx(() => sic.staggeredImageLoading.value
             ? const ShimmerLoadingForStaggered()
             : Column(
@@ -105,8 +144,8 @@ class _CBStaggeredListViewState extends State<CBStaggeredListView> {
                             1,
                           ),
                           const WovenGridTile(
-                            5.1 / 6,
-                            crossAxisRatio: 0.94,
+                            5.5 / 6,
+                            crossAxisRatio: 0.97,
                             alignment: AlignmentDirectional.centerEnd,
                           ),
                         ],
@@ -138,12 +177,12 @@ class _CBStaggeredListViewState extends State<CBStaggeredListView> {
                         } else {
                           return Obx(() => sic.hasMore.value == false
                               ? Container(
-                                  margin: EdgeInsets.only(bottom: 10),
+                                  margin: const EdgeInsets.only(bottom: 10),
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                       color: Colors.orangeAccent,
                                       borderRadius: BorderRadius.circular(15)),
-                                  child: Text(
+                                  child: const Text(
                                     'Sit tight, We will add more images for you \n😎😎',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 18),
@@ -170,7 +209,7 @@ class _CBStaggeredListViewState extends State<CBStaggeredListView> {
                   //     )
                   //     : SizedBox()),
 
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   )
                 ],

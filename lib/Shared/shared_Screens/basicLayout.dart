@@ -1,10 +1,11 @@
-import 'dart:io';
-
 import 'package:cb_stocks/Shared/shared_Screens/navigation_drawer.dart';
+import 'package:cb_stocks/controller/admob_controller.dart';
 import 'package:cb_stocks/screens/CBSearchScreen.dart';
 import 'package:cb_stocks/utils/CBColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CBBasicLayout extends StatefulWidget {
@@ -15,12 +16,14 @@ class CBBasicLayout extends StatefulWidget {
   final bool hideSideDrawer;
   final bool showAppBar;
   final bool backIcon;
+  final Widget? bottomNavigationBar;
   CBBasicLayout(
       {super.key,
       this.hasParentPadding = true,
       this.showAppBar = true,
       this.hideSideDrawer = false,
       this.backIcon = false,
+      this.bottomNavigationBar,
       required this.child,
       this.screenHeading,
       this.statusColor = CBColors.white});
@@ -30,14 +33,22 @@ class CBBasicLayout extends StatefulWidget {
 }
 
 class _CBBasicLayoutState extends State<CBBasicLayout> {
+  AdMobController adMob = Get.find();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    double horizontalPadding = size.width * 0.05;
+    double horizontalPadding = size.width * 0.02;
     return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: CBColors.white,
         extendBody: true,
+        bottomNavigationBar: widget.bottomNavigationBar ??
+            Obx(() => adMob.isHomePageBannerLoaded.value == true
+                ? SizedBox(
+                    height: adMob.homePageBanner.size.height.toDouble(),
+                    child: AdWidget(ad: adMob.homePageBanner))
+                : const SizedBox()),
         drawer: !widget.showAppBar ? null : const NavigationDrawer(),
         appBar: !widget.showAppBar
             ? null
@@ -50,7 +61,10 @@ class _CBBasicLayoutState extends State<CBBasicLayout> {
                             Icons.arrow_back_ios,
                             size: 25,
                           ),
-                          onPressed: () {
+                          onPressed: () async {
+                            if (adMob.isGoBackBannerLoaded.value == true) {
+                              adMob.goBackPageBanner.show();
+                            }
                             Navigator.pop(context);
                           },
                         ),
@@ -74,8 +88,7 @@ class _CBBasicLayoutState extends State<CBBasicLayout> {
                     ? null
                     : [
                         Padding(
-                          padding:
-                              EdgeInsets.only(right: horizontalPadding + 10),
+                          padding: EdgeInsets.only(right: horizontalPadding),
                           child: IconButton(
                             onPressed: () => Navigator.push(
                                 context,

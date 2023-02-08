@@ -4,11 +4,15 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class ShimmerLoadingForStaggered extends StatelessWidget {
   final int count;
-  const ShimmerLoadingForStaggered({super.key, this.count = 4});
+  final ScrollController? controller;
+  const ShimmerLoadingForStaggered(
+      {super.key, this.count = 4, this.controller});
 
   @override
   Widget build(BuildContext context) {
     return GridView.custom(
+      shrinkWrap: true,
+      controller: controller,
       gridDelegate: SliverWovenGridDelegate.count(
         crossAxisCount: 2,
         mainAxisSpacing: 0,

@@ -1,11 +1,16 @@
+import 'package:cb_stocks/controller/admob_controller.dart';
 import 'package:cb_stocks/controller/main_controller.dart';
 import 'package:cb_stocks/screens/CBSplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
   Get.lazyPut<MainController>(() => MainController());
+  Get.lazyPut<AdMobController>(() => AdMobController());
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 

@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cb_stocks/Shared/shared_Screens/basicLayout.dart';
 import 'package:cb_stocks/Shared/shared_widget/shimmer_loading_for_category_list.dart';
 import 'package:cb_stocks/Shared/shared_widget/shimmer_loading_for_color_list.dart';
 import 'package:cb_stocks/Shared/shared_widget/shimmer_loading_of_best_of_wallpaper.dart';
+import 'package:cb_stocks/controller/admob_controller.dart';
 import 'package:cb_stocks/controller/main_controller.dart';
 import 'package:cb_stocks/screens/CBImageFullView.dart';
 import 'package:cb_stocks/screens/CBStaggeredListView.dart';
@@ -10,6 +13,7 @@ import 'package:cb_stocks/utils/CBColors.dart';
 import 'package:cb_stocks/utils/CBStyles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CBHomeScreen extends StatefulWidget {
@@ -22,6 +26,7 @@ class CBHomeScreen extends StatefulWidget {
 class _CBHomeScreenState extends State<CBHomeScreen> {
   ScrollController scrollCtr = ScrollController();
   MainController mc = Get.put(MainController());
+  AdMobController adMob = Get.find();
 
   List<Color> color = [
     Colors.green,
@@ -62,13 +67,19 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
     if (mc.categoryList.isEmpty) {
       mc.fetchCategoryLoading();
     }
+
+    Timer(const Duration(milliseconds: 500), () {
+      adMob.runHomePageBanner();
+      adMob.runAdsInListingNative();
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    double horizontalPadding = size.width * 0.05;
+    double horizontalPadding = size.width * 0.02;
+
     return CBBasicLayout(
         screenHeading: 'CB Stocks',
         statusColor: CBColors.white,
@@ -76,8 +87,13 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
         child: ListView(
           controller: scrollCtr,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
+            ),
+            Obx(
+              () => adMob.isNativeAdsLoading.value == true
+                  ? AdWidget(ad: adMob.nativeADS)
+                  : SizedBox(),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -146,7 +162,7 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
                     child: const ShimmerLoadingForColorList(),
                   )
                 : SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.08,
+                    height: MediaQuery.of(context).size.height * 0.076,
                     child: ListView.builder(
                         controller: scrollCtr,
                         shrinkWrap: true,
@@ -165,11 +181,11 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
                                     ))),
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.16,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: index == 0 ? 0 : 8),
+                              margin:
+                                  EdgeInsets.only(left: index == 0 ? 0 : 10),
                               decoration: BoxDecoration(
-                                  // color: Color(int.parse('0xff${x.code}')),
-                                  color: color[index],
+                                  color: Color(int.parse('0xff${x.code}')),
+                                  // color: color[index],
                                   borderRadius: BorderRadius.circular(12)),
                             ),
                           );
@@ -203,9 +219,9 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisSpacing: 10.0,
-                            crossAxisSpacing: 10.0,
-                            mainAxisExtent: 100),
+                            mainAxisSpacing: 6.0,
+                            crossAxisSpacing: 6.0,
+                            mainAxisExtent: 120),
                     itemBuilder: (BuildContext context, int index) {
                       var x = mc.categoryList[index];
                       return InkWell(
@@ -219,27 +235,37 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
                         child: Stack(
                           children: [
                             Positioned.fill(
-                              child: Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: index == 0 ? 0 : 8),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: CachedNetworkImage(
-                                    // width:
-                                    //     MediaQuery.of(context).size.width / 2.5,
-                                    imageUrl: x.image ?? "",
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
-                                            'assets/icons/ad_banner.png'),
-                                  ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: CachedNetworkImage(
+                                  // width:
+                                  //     MediaQuery.of(context).size.width / 2.5,
+                                  imageUrl: x.image ?? "",
+                                  filterQuality: FilterQuality.medium,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset('assets/icons/ad_banner.png'),
                                 ),
                               ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  // color: Colors.black,
+
+                                  gradient: LinearGradient(
+                                      begin: AlignmentDirectional.bottomStart,
+                                      end: AlignmentDirectional.bottomEnd,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.7)
+                                      ])),
                             ),
                             Center(
                               child: Text(
                                 x.name ?? "",
                                 style: const TextStyle(
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white),
                               ),

@@ -13,7 +13,7 @@ class NavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Drawer(
           child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
+        value: const SystemUiOverlayStyle(
             statusBarColor: Colors.yellow,
             statusBarIconBrightness: Brightness.dark),
         child: SingleChildScrollView(
@@ -50,19 +50,19 @@ class NavigationDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 MainController mc = Get.find();
-                Get.to(() => CBHomeScreen());
+                Get.to(() => const CBHomeScreen());
               },
               leading: Image.asset(
                 'assets/icons/house.png',
                 height: 30,
                 width: 30,
               ),
-              title: Text(
+              title: const Text(
                 'Home',
                 style: TextStyle(fontSize: 18, color: CBColors.redCrayola),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2.0,
               color: Colors.black,
             ),
@@ -72,12 +72,12 @@ class NavigationDrawer extends StatelessWidget {
                 height: 30,
                 width: 30,
               ),
-              title: Text(
+              title: const Text(
                 'About Us',
                 style: TextStyle(fontSize: 18, color: CBColors.redCrayola),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2.0,
               color: Colors.black,
             ),
@@ -87,12 +87,12 @@ class NavigationDrawer extends StatelessWidget {
                 height: 30,
                 width: 30,
               ),
-              title: Text(
+              title: const Text(
                 'Privacy Policy',
                 style: TextStyle(fontSize: 18, color: CBColors.redCrayola),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2.0,
               color: Colors.black,
             ),
@@ -110,12 +110,12 @@ class NavigationDrawer extends StatelessWidget {
                 height: 30,
                 width: 30,
               ),
-              title: Text(
+              title: const Text(
                 'Search',
                 style: TextStyle(fontSize: 18, color: CBColors.redCrayola),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2.0,
               color: Colors.black,
             ),

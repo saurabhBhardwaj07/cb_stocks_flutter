@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:cb_stocks/Shared/shared_Screens/basicLayout.dart';
 import 'package:cb_stocks/screens/CBHomeScreen.dart';
 import 'package:cb_stocks/utils/CBColors.dart';
-import 'package:cb_stocks/utils/CBStyles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
@@ -62,10 +60,10 @@ class _CBSplashScreenState extends State<CBSplashScreen>
         backgroundColor: CBColors.white,
         extendBody: true,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
+            value: const SystemUiOverlayStyle(
                 statusBarColor: Colors.black,
                 statusBarIconBrightness: Brightness.light),
-            child: Container(
+            child: SizedBox(
               width: size.width,
               height: size.height,
               child: SafeArea(
@@ -100,7 +98,7 @@ class _CBSplashScreenState extends State<CBSplashScreen>
                         )
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     AnimatedBuilder(
                       animation: _controller,
                       builder: (context, child) {
@@ -129,7 +127,7 @@ class _CBSplashScreenState extends State<CBSplashScreen>
 class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    var path = new Path();
+    var path = Path();
     path.lineTo(0, size.height);
     var firstStart = Offset(size.width / 5, size.height);
     var firstEnd = Offset(size.width / 2.25, size.height - 50.0);
